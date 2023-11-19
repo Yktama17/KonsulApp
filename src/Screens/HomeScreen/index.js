@@ -11,15 +11,15 @@ import {
   TouchableOpacity,
   TouchableHighlight,
 } from 'react-native';
+
 import {
   SearchNormal1,
   Bag2,
   Snapchat,
   Bookmark,
   More,
-  Home,
-  Profile,
 } from 'iconsax-react-native';
+
 import { useNavigation } from '@react-navigation/native';
 // import logo from './src/Asset/PIC2.png'
 
@@ -119,44 +119,6 @@ export default function App() {
         </View>
       </ScrollView>
       <View style={styles.buttonBar}>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            {backgroundColor: Press === 1 ? '#e8fee4' : '#f3f3f3'},
-          ]}
-          onPress={() => setPress(1)}>
-          <Home size={32} variant="Linear" color="black" />
-          <Text
-            style={[
-              styles.buttonText,
-              {color: Press === 1 ? '#005D17' : 'black'},
-            ]}>
-            Home
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.button,
-            {backgroundColor: Press === 2 ? '#e8fee4' : '#f3f3f3'},
-          ]}
-          onPress={() => setPress(2)}>
-          <Home size={32} variant="Linear" color="black" />
-          <Text
-            style={[
-              styles.buttonText,
-              {color: Press === 2 ? '#005D17' : 'black'},
-            ]}>
-            Beli Obat
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: Press === 3 ? '#e8fee4' : '#f3f3f3' }]}
-          onPress={() => setPress(3)}>
-          <Profile size={32} variant='Linear' color='black' />
-          <Text style={[styles.buttonText, { color: Press === 3 ? '#005D17' : 'black' }]}>Profile</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );

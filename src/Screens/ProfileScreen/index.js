@@ -1,155 +1,58 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Image, Button } from "react-native";
 
-const win = Dimensions.get('window');
+const ProfileScreen = ({ navigation }) => {
+  const [user, setUser] = useState({
+    name: "John Doe",
+    photo: null,
+    birthday: "2000-01-01",
+    gender: "male",
+  });
 
-const ProfileScreen = () => {
-  const navigation = useNavigation();
-
-  const handleEditProfile = () => {
-    // Tambahkan logika untuk menangani tombol Edit Profil
-    console.log('Edit Profil');
-  };
-
-  const handleMyOrders = () => {
-    // Tambahkan logika untuk menangani tombol Pesanan Saya
-    console.log('Pesanan Saya');
-  };
-
-  const handlePaymentMethods = () => {
-    // Tambahkan logika untuk menangani tombol Cara Pembayaran
-    console.log('Cara Pembayaran');
-  };
-
-  const handleInviteFriends = () => {
-    // Tambahkan logika untuk menangani tombol Invite Teman
-    console.log('Invite Teman');
-  };
+  useEffect(() => {
+    // Get the user data from the backend
+    fetch("/api/users/me")
+      .then((response) => response.json())
+      .then((data) => setUser(data));
+  }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.profileImageContainer}>
-          <Image
-            style={styles.profileImage}
-            source={{ uri: 'https://editorial.femaledaily.com/wp-content/uploads/2023/07/Haerin-2.png' }}
-          />
-        </View>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.userName}>Kang Haerin</Text>
-        </View>
-      </View>
-
-      <ScrollView horizontal style={styles.iklanContainer}>
-        {/* ... */}
-      </ScrollView>
-
-      <View style={styles.menuContainer}>
-        <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
-          <Text style={styles.menuItemText}>Edit Profil</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={handleMyOrders}>
-          <Text style={styles.menuItemText}>Pesanan Saya</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={handlePaymentMethods}>
-          <Text style={styles.menuItemText}>Cara Pembayaran</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem} onPress={handleInviteFriends}>
-          <Text style={styles.menuItemText}>Invite Teman</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Image
+        style={styles.photo}
+        source={user.photo}
+      />
+      <Text style={styles.name}>{user.name}</Text>
+      <Text style={styles.birthday}>{user.birthday}</Text>
+      <Text style={styles.gender}>{user.gender}</Text>
+      <Button
+        title="Ubah"
+        onPress={() => navigation.navigate("EditProfile")}
+      />
+    </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
-
-  header: {
-    height: 200,
-    backgroundColor: '#236b23',
-  },
-  
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 5, // Efek elevasi untuk kotak header
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  profileImageContainer: {
-    padding : 0,
-    flex: 1,
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
+  photo: {
+    width: 100,
+    height: 100,
     borderRadius: 50,
   },
-  userInfoContainer: {
-    flex: 2,
-    justifyContent: 'center',
-  },
-  userName: {
+  name: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-  menuContainer: {
-    alignItems: 'left',
-    padding: 10,
-  },
-  menuItem: {
-    backgroundColor: 'lightgray',
-    width: 200,
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
-    alignItems: 'center', 
-  },
-  menuItemText: {
+  birthday: {
     fontSize: 16,
-    fontWeight: 'bold',
   },
-
-  iklanContainer2: {
-    marginTop: 2,
-    marginHorizontal: 8,
-  },
-
-  iklanHeader: {
-    color: 'black',
-    fontWeight: '500',
-    fontSize: 22,
-
-  },
-
-  iklanImage: {
-    marginTop: 6,
-    borderRadius: 15,
-    width: win.width-64,
-    height:212,
-  },
-
-  iklanTextHeader: {
+  gender: {
     fontSize: 16,
-    marginTop: 6,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-
-  iklanTextSponsored: {
-    marginTop: 2,
-    color: 'grey',
   },
 });
 
