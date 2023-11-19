@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   Dimensions,
   ScrollView,
@@ -9,7 +9,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TouchableHighlight,
+  Animated,
 } from 'react-native';
 
 import {
@@ -20,8 +20,7 @@ import {
   More,
 } from 'iconsax-react-native';
 
-import { useNavigation } from '@react-navigation/native';
-// import logo from './src/Asset/PIC2.png'
+import {useNavigation} from '@react-navigation/native';
 
 const win = Dimensions.get('window');
 
@@ -39,7 +38,6 @@ const HomeScreen = () => {
   );
 };
 
-
 const Status = () => {
   return <StatusBar translucent backgroundColor={'rgba(0,0,0,0)'}></StatusBar>;
 };
@@ -47,12 +45,36 @@ const Status = () => {
 export default function App() {
   const [Press, setPress] = useState(1);
 
+  const animatedValue = useRef(new Animated.Value(0)).current;
+
+  const opacity = animatedValue.interpolate({
+    inputRange: [0, 200],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+
+  const scale = animatedValue.interpolate({
+    inputRange: [0, 200],
+    outputRange: [1, 0.5],
+    extrapolate: 'clamp',
+  });
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      onScroll={Animated.event(
+        [{nativeEvent: {contentOffset: {y: animatedValue}}}],
+        {useNativeDriver: false},
+      )}
+      scrollEventThrottle={16}>
       <Status />
-      <View style={styles.header}></View>
-      {/* <Text style={styles.Profile}>Halo Tama</Text> */}
-      {/* <Image style={ styles.logoHeader } source={ logo }/> */}
+      <Animated.View
+        style={[
+          styles.header,
+          {opacity, transform: [{scale}]},
+        ]}></Animated.View>
+
+      {/* ... (unchanged code) */}
       <View style={styles.searchContainer}>
         <SearchNormal1 variant="Linear" color="grey" style={{marginLeft: 12}} />
         <TextInput
@@ -60,7 +82,9 @@ export default function App() {
           placeholder="Cari Solusi"
           placeholderTextColor={'grey'}></TextInput>
       </View>
+
       <View style={styles.fiturContainer}>
+        {/* ... (unchanged code) */}
         <TouchableOpacity style={styles.fiturContainer2}>
           <Bag2 size={32} variant="Linear" color="black" />
           <Text style={styles.fiturText}>Buat Janji</Text>
@@ -92,6 +116,7 @@ export default function App() {
           </Text>
         </TouchableOpacity>
       </View>
+
       <ScrollView horizontal style={styles.iklanContainer}>
         <View style={styles.iklanContainer2}>
           <Text style={styles.iklanHeader}>Cek Kesehatan</Text>
@@ -118,8 +143,8 @@ export default function App() {
           <Text style={styles.iklanTextSponsored}>KonsulApps</Text>
         </View>
       </ScrollView>
-      <View style={styles.buttonBar}>
-      </View>
+
+      <View style={styles.buttonBar}></View>
     </ScrollView>
   );
 }
@@ -129,21 +154,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-
   header: {
     height: 200,
     backgroundColor: '#236b23',
   },
-
-  logoHeader: {
-    width: win.width,
-    height: 128,
-    resizeMode: 'contain',
-    position: 'absolute',
-    alignSelf: 'center',
-    top: 8,
-  },
-
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -154,42 +168,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: -110,
   },
-
   search: {
     marginHorizontal: 8,
     color: 'black',
     width: win.width - 112,
   },
-
-  categoryContainer: {
-    marginHorizontal: 32,
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 30,
-  },
-
-  categoryContainer2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f3f3f3',
-    borderRadius: 16,
-    padding: 8,
-    marginHorizontal: 4,
-  },
-
-  category: {
-    marginHorizontal: 4,
-    color: 'black',
-    fontSize: 12,
-  },
-
-  categoryTouch: {
-    marginHorizontal: 4,
-    color: '#00AA13',
-    fontSize: 12,
-  },
-
   fiturContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -200,75 +183,64 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
-
   fiturContainer2: {
     alignItems: 'center',
     marginTop: 14,
   },
-
   fiturText: {
     color: 'black',
     marginTop: 6,
     fontSize: 12,
   },
-
+  categoryContainer: {
+    marginHorizontal: 32,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  category: {
+    marginHorizontal: 4,
+    color: 'black',
+    fontSize: 12,
+  },
   iklanContainer: {
     marginTop: 16,
     height: 300,
     marginHorizontal: 8,
   },
-
   iklanContainer2: {
     marginTop: 2,
     marginHorizontal: 8,
   },
-
   iklanHeader: {
     color: 'black',
     fontWeight: '500',
     fontSize: 22,
   },
-
   iklanImage: {
     marginTop: 6,
     borderRadius: 15,
     width: win.width - 64,
     height: 212,
   },
-
   iklanTextHeader: {
     fontSize: 16,
     marginTop: 6,
     color: 'black',
     fontWeight: 'bold',
   },
-
   iklanTextSponsored: {
     marginTop: 2,
     color: 'grey',
-
-    buttonBar: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginTop: 20,
-      backgroundColor: 'white',
-      elevation: 3,
-      borderRadius: 10,
-      marginHorizontal: 2,
-    },
-    
-    button: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 8,
-    },
-    
-    buttonText: {
-      fontSize: 12,
-      marginTop: 6,
-      color: 'black',
-    },    
+  },
+  buttonBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+    backgroundColor: 'white',
+    elevation: 3,
+    borderRadius: 10,
+    marginHorizontal: 2,
   },
 });
-

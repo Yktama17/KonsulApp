@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
-import { Home3, Profile } from 'iconsax-react-native';
+import { Home, Profile } from 'iconsax-react-native';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -30,7 +30,7 @@ const App = () => {
           options={{ 
             tabBarLabel: 'Home',
             tabBarIcon: ({ color, size }) => (
-              <Home3 name="Home" size={'30'} color={'blue'} />
+              <Home name="Home" size={'30'} color={'blue'} />
             ),
             headerShown: false,
           }}
