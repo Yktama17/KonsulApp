@@ -1,12 +1,34 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity,ScrollView,Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-
-const win = Dimensions.get('window')
+const win = Dimensions.get('window');
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
+  const handleEditProfile = () => {
+    // Tambahkan logika untuk menangani tombol Edit Profil
+    console.log('Edit Profil');
+  };
+
+  const handleMyOrders = () => {
+    // Tambahkan logika untuk menangani tombol Pesanan Saya
+    console.log('Pesanan Saya');
+  };
+
+  const handlePaymentMethods = () => {
+    // Tambahkan logika untuk menangani tombol Cara Pembayaran
+    console.log('Cara Pembayaran');
+  };
+
+  const handleInviteFriends = () => {
+    // Tambahkan logika untuk menangani tombol Invite Teman
+    console.log('Invite Teman');
+  };
+
   return (
-    <ScrollView style={ styles.container }>
+    <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.profileImageContainer}>
           <Image
@@ -16,35 +38,33 @@ const ProfileScreen = () => {
         </View>
         <View style={styles.userInfoContainer}>
           <Text style={styles.userName}>Kang Haerin</Text>
-          
         </View>
       </View>
-      <ScrollView horizontal style={ styles.iklanContainer }>
-        <View style={ styles.iklanContainer2 }>
-          <Text style={ styles.iklanHeader }>Cek Kesehatan</Text>
-          <Image style={styles.iklanImage} source={{ uri: 'https://images.unsplash.com/photo-1547082688-9077fe60b8f9?auto=format&fit=crop&q=80&w=1932&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }} />
-          <Text style={ styles.iklanTextHeader }>Cek Kesehatan Melalui Gadget Anda</Text>
-          <Text style={ styles.iklanTextSponsored }>KonsulApps</Text>
-          </View>
-          </ScrollView>
+
+      <ScrollView horizontal style={styles.iklanContainer}>
+        {/* ... */}
+      </ScrollView>
+
       <View style={styles.menuContainer}>
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
           <Text style={styles.menuItemText}>Edit Profil</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+
+        <TouchableOpacity style={styles.menuItem} onPress={handleMyOrders}>
           <Text style={styles.menuItemText}>Pesanan Saya</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+
+        <TouchableOpacity style={styles.menuItem} onPress={handlePaymentMethods}>
           <Text style={styles.menuItemText}>Cara Pembayaran</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+
+        <TouchableOpacity style={styles.menuItem} onPress={handleInviteFriends}>
           <Text style={styles.menuItemText}>Invite Teman</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -94,7 +114,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,
-    alignItems: 'Left',
+    alignItems: 'center', 
   },
   menuItemText: {
     fontSize: 16,
