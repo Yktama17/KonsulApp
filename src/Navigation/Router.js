@@ -1,10 +1,13 @@
+// router.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
+import ChatScreen from '../Screens/ChatScreen'; 
 import { Home, Profile } from 'iconsax-react-native';
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -12,22 +15,23 @@ const HomeStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false, 
+        headerShown: false,
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   );
 };
 
-const App = () => {
+const AppRouter = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen
           name="Home"
           component={HomeStack}
-          options={{ 
+          options={{
             tabBarLabel: 'Home',
             tabBarIcon: ({ color, size }) => (
               <Home name="Home" size={'30'} color={'blue'} />
@@ -51,4 +55,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AppRouter;

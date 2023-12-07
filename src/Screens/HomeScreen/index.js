@@ -1,25 +1,6 @@
 import React, {useState, useRef} from 'react';
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-  StatusBar,
-  Text,
-  Image,
-  TouchableOpacity,
-  Animated,
-} from 'react-native';
-
-import {
-  SearchNormal1,
-  Bag2,
-  Snapchat,
-  Bookmark,
-  More,
-} from 'iconsax-react-native';
-
+import {Dimensions,ScrollView,StyleSheet,TextInput,View,StatusBar,Text,Image,TouchableOpacity,Animated,} from 'react-native';
+import {SearchNormal1,Bag2,Snapchat,Bookmark,More,} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 
 const win = Dimensions.get('window');
@@ -58,7 +39,7 @@ export default function App() {
     outputRange: [1, 0.5],
     extrapolate: 'clamp',
   });
-
+  const navigation = useNavigation();
   return (
     <ScrollView
       style={styles.container}
@@ -87,9 +68,12 @@ export default function App() {
         {/* ... (unchanged code) */}
         <TouchableOpacity style={styles.fiturContainer2}>
           <Bag2 size={32} variant="Linear" color="black" />
-          <Text style={styles.fiturText}>Buat Janji</Text>
+          <Text style={styles.fiturText}>Beli Obat</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.fiturContainer2}>
+        <TouchableOpacity 
+          style={styles.fiturContainer2}
+          onPress={() => navigation.navigate('Chat')}  
+        >
           <Snapchat size={32} variant="Linear" color="black" />
           <Text style={styles.fiturText}>Chat Dokter</Text>
         </TouchableOpacity>
