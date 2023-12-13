@@ -1,232 +1,149 @@
-import React, {useState} from 'react';
-import {View,Text,TextInput,TouchableOpacity, StyleSheet, ScrollView,} from 'react-native';
-import {ArrowLeft} from 'iconsax-react-native';
-import {fontType, colors} from '../../theme';
-import {useNavigation} from '@react-navigation/native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
+import { ArrowLeft, InfoCircle } from 'iconsax-react-native';
+import { colors, fontType } from '../../theme';
+import {Edit} from 'iconsax-react-native';
+import axios from 'axios';
 
-const ChatScreen = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
-  const [price, setPrice] = useState('');
-  const navigation = useNavigation();
+export default function Konsultasi({ route, navigation }) {
+  const [mentorData, setMentorData] = useState([]);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const diffClampY = Animated.diffClamp(scrollY, 0, 100);
+  const recentY = diffClampY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [0, -80],
+    extrapolate: 'clamp',
+  });
 
-  const handleUpload = () => {
-    const dataToUpload = { title, content, image,price,
-    };
-    console.log('Data to upload:', dataToUpload);
-  };
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.black()} variant="Linear" size={24} />
-        </TouchableOpacity>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.title}>Masukan</Text>
-        </View>
+  useEffect(() => {
+    async function fetchMentorData() {
+      try {
+        const response = await axios.get('https://6571c668d61ba6fcc01386ea.mockapi.io/konsulapp/Konsul');
+        setMentorData(response.data);
+      } catch (error) {
+        console.error('Error fetching mentor data:', error);
+      }
+    }
+
+    fetchMentorData();
+  }, []);
+
+  const renderMentorItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.mentorContainer}
+      onPress={() => navigation.navigate('DokterDetail', { mentorId: item.id })}>
+      <Image source={{ uri: item.image }} style={styles.image} />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.category}>{item.description}</Text>
+        <Text style={styles.category}>Price: {item.price}</Text>
       </View>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingVertical: 10,
-          gap: 10,
-        }}>
-        <View style={styles.borderDashed}>
-          <TextInput
-            placeholder="Nama"
-            value={title}
-            onChangeText={text => setTitle(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={styles.titleInput}
-          />
-        </View>
-        <View style={[styles.borderDashed, {minHeight: 250}]}>
-          <TextInput
-            placeholder="Keluhan"
-            value={content}
-            onChangeText={text => setContent(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={styles.contentInput}
-          />
-        </View>
-        <View style={styles.borderDashed}>
-          <TextInput
-            placeholder="Image"
-            value={image}
-            onChangeText={text => setImage(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            style={styles.contentInput}
-          />
-        </View>
-        <View style={styles.borderDashed}>
-          <TextInput
-            placeholder=""
-            value={price}
-            onChangeText={text => setPrice(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            style={styles.contentInput}
-          />
-        </View>
-      </ScrollView>
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
-          <Text style={styles.buttonLabel}>Upload</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
-};
 
-
-const styles1 = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  header: {
-    position: 'absolute',
-    zIndex: 1000,
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    height: 64,
-    paddingHorizontal: 8,
-    backgroundColor: '#FFF',
-  },
-  headerStart: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  back: {
-    padding: 8,
-  },
-  headerEnd: {
-    flex: 1,
-    paddingRight: 8,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  detailText: {
-    color: '#000',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 4,
-  },
-  imageStyle: scrollY => ({
-    resizeMode: 'contain',
-    height: 300,
-    width: 425,
-    borderRadius: 16,
-    alignSelf: 'center',
-    transform: [
-      {
-        translateY: scrollY,
-      },
-      {
-        scale: scrollY.interpolate({
-          inputRange: [-300, 0],
-          outputRange: [2, 1],
-        }),
-      },
-    ],
-  }),
-
-  cardContentImage: {
-    paddingHorizontal: 16,
-    marginTop: 50,
-  },
-  cardContentText: {
-    paddingHorizontal: 20,
-    borderRadius: 50,
-    backgroundColor: '#02acf5',
-    marginTop: -20,
-  },
-  titleText: {
-    color: '#000',
-    fontSize: 24,
-    fontWeight: '700',
-    marginLeft: 16,
-    marginTop: 30,
-    marginVertical: 8,
-  },
-  descText: {
-    color: '#000',
-    fontSize: 16,
-    marginLeft: 16,
-    textAlign: 'justify',
-    lineHeight: 25,
-  },
-}); 
+  return (
+    <TouchableWithoutFeedback onPress={() => navigation.navigate('SearchPage')}>
+      <Animated.View style={[styles.container, { transform: [{ translateY: recentY }] }]}>
+        <View>
+          <View style={styles.category}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <ArrowLeft color={colors.black(0.8)} size={24} />
+            </TouchableOpacity>
+            <Text style={styles.heading}>Chat Dokter</Text>
+            <InfoCircle color={colors.black(0.8)} size={24} />
+          </View>
+          <FlatList
+            data={mentorData}
+            renderItem={renderMentorItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </View>
+        <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('Add')}
+      >
+        <Edit color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'white',
+    padding: 25,
   },
-  header: {
-    paddingHorizontal: 24,
+  searchBar: {
+    marginTop:20,
     flexDirection: 'row',
-    alignItems: 'center',
     height: 52,
-    elevation: 8,
-    paddingTop: 8,
-    paddingBottom: 4,
+  },
+  category: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  heading: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: fontType['Itr-Medium'],
+    color: colors.black(0.8),
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'regular',
+    fontFamily: fontType['Itr-Regular'],
+    color: colors.black(0.8),
+  },
+  mentorContainer: {  
+    flexDirection: 'row',
+    marginTop: 20,
+    
+    gap: 20,
+    alignItems: 'left',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 12,
+    marginBottom: 10,
   },
   title: {
-    fontFamily: fontType['Pjs-Bold'],
-    fontSize: 16,
-    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: fontType['Itr-Medium'],
+    color: colors.black(0.8),
   },
-  borderDashed: {
-    borderStyle: 'dashed',
-    borderWidth: 1,
-    borderRadius: 5,
+  bar: {
+    flexDirection: 'row',
     padding: 10,
-    borderColor: 'grey(0.4)',
+    gap: 10,
+    alignItems: 'center',
+    backgroundColor: colors.grey(0.05),
+    borderRadius: 10,
+    flex: 1,
   },
-  titleInput: {
-    fontSize: 16,
-    fontFamily: fontType['Pjs-SemiBold'],
-    color: 'black',
-    padding: 0,
+  placeholder: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-Medium'],
+    color: colors.grey(0.5),
+    lineHeight: 18,
   },
-  contentInput: {
-    fontSize: 12,
-    fontFamily: fontType['Pjs-Regular'],
-    color: 'black',
-    padding: 0,
-  },
-  bottomBar: {
-    backgroundColor: 'white',
-    alignItems: 'flex-end',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    shadowColor: 'black',
+  floatingButton: {
+    backgroundColor: colors.blue(),
+    padding: 15,
+    position: 'absolute',
+    bottom: 40,
+    right: 24,
+    borderRadius: 10,
+    shadowColor: colors.blue(),
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  uploadButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: 'blue',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonLabel: {
-    fontSize: 14,
-    fontFamily: fontType['Pjs-SemiBold'],
-    color: 'white',
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+
+    elevation: 8,
   },
 });
-export default ChatScreen;

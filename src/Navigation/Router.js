@@ -6,6 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import ChatScreen from '../Screens/ChatScreen'; 
+import DokterDetail from '../Screens/DokterDetail'; 
+import AddDokter from '../Screens/AddDokter'; 
 import { Home, Profile } from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
@@ -20,6 +22,8 @@ const HomeStack = () => {
     >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="DokterDetail" component={DokterDetail} />
+      <Stack.Screen name="Add" component={AddDokter} />
     </Stack.Navigator>
   );
 };
