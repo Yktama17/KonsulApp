@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,31 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  ActivityIndicator
-} from "react-native";
-import { ArrowLeft } from "iconsax-react-native";
-import { useNavigation } from "@react-navigation/native";
-import { fontType, colors } from "../../theme";
-import {categories} from "../../data";
-import axios from 'axios';
+  ActivityIndicator,
+} from 'react-native';
+import {ArrowLeft} from 'iconsax-react-native';
+import {useNavigation} from '@react-navigation/native';
+import {fontType, colors} from '../../theme';
+import ImagePicker from 'react-native-image-crop-picker';
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
+import {categories} from '../../data';
+
+const handleImagePick = async () => {
+  ImagePicker.openPicker({
+    width: 1920,
+    height: 1080,
+    cropping: true,
+  })
+    .then(image => {
+      console.log(image);
+      setImage(image.path);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
 
 const AddMentorForm = () => {
   const navigation = useNavigation();
@@ -30,15 +48,15 @@ const AddMentorForm = () => {
   };
   const handleUpload = async () => {
     try {
-      const response = await axios.post(
-        'https://6571c668d61ba6fcc01386ea.mockapi.io/konsulapp/Konsul',
-        {
+      const authorId = auth().currentUser.uid;
+      const data = await firestore()
+        .collection('chat')
+        .add({
           title: mentorData.title,
-          image,
-          price: mentorData.price,
-          description: mentorData.description,
-        }
-      );
+          price: parseInt(mentorData.price),
+          desc: mentorData.description,
+        });
+      console.log((await data.get()).data());
       navigation.navigate('Chat');
     } catch (error) {
       console.error(error);
@@ -51,7 +69,7 @@ const AddMentorForm = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft color={colors.black()} variant="Linear" size={24} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{flex: 1, alignItems: 'center'}}>
           <Text style={styles.title}>Add Mentor</Text>
         </View>
       </View>
@@ -60,13 +78,12 @@ const AddMentorForm = () => {
           paddingHorizontal: 24,
           paddingVertical: 10,
           gap: 10,
-        }}
-      >
+        }}>
         <View style={textInput.border}>
           <TextInput
             placeholder="Title"
             value={mentorData.title}
-            onChangeText={(text) => handleChange("title", text)}
+            onChangeText={text => handleChange('title', text)}
             placeholderTextColor={colors.grey(0.6)}
             multiline
             style={textInput.title}
@@ -76,7 +93,7 @@ const AddMentorForm = () => {
           <TextInput
             placeholder="Image"
             value={image}
-            onChangeText={(text) => setImage(text)}
+            onChangeText={text => setImage(text)}
             placeholderTextColor={colors.grey(0.6)}
             style={textInput.content}
           />
@@ -85,7 +102,7 @@ const AddMentorForm = () => {
           <TextInput
             placeholder="Price"
             value={mentorData.price}
-            onChangeText={(text) => handleChange("price", text)}
+            onChangeText={text => handleChange('price', text)}
             placeholderTextColor={colors.grey(0.6)}
             style={textInput.content}
             keyboardType="numeric"
@@ -95,7 +112,7 @@ const AddMentorForm = () => {
           <TextInput
             placeholder="Description"
             value={mentorData.description}
-            onChangeText={(text) => handleChange("description", text)}
+            onChangeText={text => handleChange('description', text)}
             placeholderTextColor={colors.grey(0.6)}
             style={textInput.content}
           />
@@ -113,28 +130,27 @@ const AddMentorForm = () => {
 export default AddMentorForm;
 
 const styles = StyleSheet.create({
-  
   container: {
     flex: 1,
     backgroundColor: colors.white(),
   },
   header: {
     paddingHorizontal: 24,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 52,
     elevation: 8,
     paddingTop: 8,
     paddingBottom: 4,
   },
   title: {
-    fontFamily: fontType["Itr-Bold"],
+    fontFamily: fontType['Itr-Bold'],
     fontSize: 16,
     color: colors.black(),
   },
   bottomBar: {
     backgroundColor: colors.white(),
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
     paddingHorizontal: 24,
     paddingVertical: 10,
     shadowColor: colors.black(),
@@ -152,18 +168,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: colors.blue(),
     borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonLabel: {
     fontSize: 14,
-    fontFamily: fontType["Itr-SemiBold"],
+    fontFamily: fontType['Itr-SemiBold'],
     color: colors.white(),
   },
 });
 const textInput = StyleSheet.create({
   border: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
@@ -171,13 +187,13 @@ const textInput = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: fontType["Itr-SemiBold"],
+    fontFamily: fontType['Itr-SemiBold'],
     color: colors.black(),
     padding: 0,
   },
   content: {
     fontSize: 12,
-    fontFamily: fontType["Itr-Regular"],
+    fontFamily: fontType['Itr-Regular'],
     color: colors.black(),
     padding: 0,
   },
@@ -185,12 +201,12 @@ const textInput = StyleSheet.create({
 const category = StyleSheet.create({
   title: {
     fontSize: 12,
-    fontFamily: fontType["Itr-Regular"],
+    fontFamily: fontType['Itr-Regular'],
     color: colors.grey(0.6),
   },
   container: {
-    flexWrap: "wrap",
-    flexDirection: "row",
+    flexWrap: 'wrap',
+    flexDirection: 'row',
     gap: 10,
     marginTop: 10,
   },
@@ -201,6 +217,6 @@ const category = StyleSheet.create({
   },
   name: {
     fontSize: 10,
-    fontFamily: fontType["Itr-Medium"],
+    fontFamily: fontType['Itr-Medium'],
   },
 });

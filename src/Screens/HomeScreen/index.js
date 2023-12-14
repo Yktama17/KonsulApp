@@ -1,6 +1,9 @@
 import React, {useState, useRef} from 'react';
 import {Dimensions,ScrollView,StyleSheet,TextInput,View,StatusBar,Text,Image,TouchableOpacity,Animated,} from 'react-native';
 import {SearchNormal1,Bag2,Snapchat,Bookmark,More,} from 'iconsax-react-native';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 
 const win = Dimensions.get('window');

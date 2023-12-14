@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => {
   return (
-    <Stack.Navigator
+    <Stack.Navigator initialRouteName="SplashScreen"
       screenOptions={{
         headerShown: false,
       }}

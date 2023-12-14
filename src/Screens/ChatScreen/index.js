@@ -1,11 +1,23 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { View, StyleSheet, Text, FlatList, Image, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
-import { ArrowLeft, InfoCircle } from 'iconsax-react-native';
-import { colors, fontType } from '../../theme';
+import React, {useRef, useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Animated,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import {ArrowLeft, InfoCircle} from 'iconsax-react-native';
+import {colors, fontType} from '../../theme';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 import {Edit} from 'iconsax-react-native';
 import axios from 'axios';
 
-export default function Konsultasi({ route, navigation }) {
+export default function Konsultasi({route, navigation}) {
   const [mentorData, setMentorData] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
   const diffClampY = Animated.diffClamp(scrollY, 0, 100);
@@ -16,34 +28,36 @@ export default function Konsultasi({ route, navigation }) {
   });
 
   useEffect(() => {
-    async function fetchMentorData() {
-      try {
-        const response = await axios.get('https://6571c668d61ba6fcc01386ea.mockapi.io/konsulapp/Konsul');
-        setMentorData(response.data);
-      } catch (error) {
-        console.error('Error fetching mentor data:', error);
-      }
-    }
-
     fetchMentorData();
   }, []);
 
-  const renderMentorItem = ({ item }) => (
+  async function fetchMentorData() {
+    try {
+      const rs = await firestore().collection('chat').get();
+      setMentorData(rs.docs);
+      console.log(rs.docs);
+    } catch (error) {
+      console.error('Error fetching mentor data:', error);
+    }
+  }
+
+  const renderMentorItem = ({item}) => (
     <TouchableOpacity
       style={styles.mentorContainer}
-      onPress={() => navigation.navigate('DokterDetail', { mentorId: item.id })}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      onPress={() => navigation.navigate('DokterDetail', {data: item._data})}>
+      {/* <Image source={{ uri: item.image }} style={styles.image} /> */}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.category}>{item.description}</Text>
-        <Text style={styles.category}>Price: {item.price}</Text>
+        <Text style={styles.title}>{item._data.title}</Text>
+        <Text style={styles.category}>{item._data.desc}</Text>
+        <Text style={styles.category}>Price: {item._data.price.toString()}</Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <TouchableWithoutFeedback onPress={() => navigation.navigate('SearchPage')}>
-      <Animated.View style={[styles.container, { transform: [{ translateY: recentY }] }]}>
+      <Animated.View
+        style={[styles.container, {transform: [{translateY: recentY}]}]}>
         <View>
           <View style={styles.category}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -55,15 +69,14 @@ export default function Konsultasi({ route, navigation }) {
           <FlatList
             data={mentorData}
             renderItem={renderMentorItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
           />
         </View>
         <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => navigation.navigate('Add')}
-      >
-        <Edit color={colors.white()} variant="Linear" size={20} />
-      </TouchableOpacity>
+          style={styles.floatingButton}
+          onPress={() => navigation.navigate('Add')}>
+          <Edit color={colors.white()} variant="Linear" size={20} />
+        </TouchableOpacity>
       </Animated.View>
     </TouchableWithoutFeedback>
   );
@@ -74,7 +87,7 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   searchBar: {
-    marginTop:20,
+    marginTop: 20,
     flexDirection: 'row',
     height: 52,
   },
@@ -95,10 +108,10 @@ const styles = StyleSheet.create({
     fontFamily: fontType['Itr-Regular'],
     color: colors.black(0.8),
   },
-  mentorContainer: {  
+  mentorContainer: {
     flexDirection: 'row',
     marginTop: 20,
-    
+
     gap: 20,
     alignItems: 'left',
   },
