@@ -8,6 +8,8 @@ import ProfileScreen from '../Screens/ProfileScreen';
 import ChatScreen from '../Screens/ChatScreen'; 
 import DokterDetail from '../Screens/DokterDetail'; 
 import AddDokter from '../Screens/AddDokter'; 
+import Login from '../Screens/Login'; 
+import Register from '../Screens/Register'; 
 import { Home, Profile } from 'iconsax-react-native';
 
 const Tab = createBottomTabNavigator();
@@ -15,7 +17,7 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => {
   return (
-    <Stack.Navigator initialRouteName="SplashScreen"
+    <Stack.Navigator initialRouteName="Login"
       screenOptions={{
         headerShown: false,
       }}
@@ -24,6 +26,9 @@ const HomeStack = () => {
       <Stack.Screen name="Chat" component={ChatScreen} />
       <Stack.Screen name="DokterDetail" component={DokterDetail} />
       <Stack.Screen name="Add" component={AddDokter} />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Register" component={Register} />
+
     </Stack.Navigator>
   );
 };
